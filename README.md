@@ -29,6 +29,7 @@ Sugestão de um local perfeito para um jantar romântico.
 
 📂 Estrutura do Código
 
+```json
 {
 "StartAt": "Invoke model with prompt 1",
 "States": {
@@ -40,6 +41,8 @@ Sugestão de um local perfeito para um jantar romântico.
 "Success": { "Type": "Pass", "End": true }
 }
 }
+
+```
 
 🛠 Como Executar
 
