@@ -1,0 +1,79 @@
+{
+  "StartAt": "Invoke model with prompt 1",
+  "States": {
+    "Invoke model with prompt 1": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::bedrock:invokeModel",
+      "Parameters": {
+        "ModelId": "arn:aws:bedrock:sa-east-1::foundation-model/amazon.titan-text-express-v1",
+        "Body": {
+          "inputText": "Estou programando um jantar romântico, nesse jantar irei pedir um macarrão. Me dê uma lista de 3 itens que combinam com essa experiência gastronômica.",
+          "textGenerationConfig": {
+            "temperature": 0.7,
+            "topP": 1,
+            "maxTokenCount": 100
+          }
+        },
+        "ContentType": "application/json",
+        "Accept": "*/*"
+      },
+      "ResultPath": "$.Itens",
+      "Next": "Pass 1"
+    },
+    "Pass 1": {
+      "Type": "Pass",
+      "Next": "Invoke model with prompt 2"
+    },
+    "Invoke model with prompt 2": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::bedrock:invokeModel",
+      "Parameters": {
+        "ModelId": "arn:aws:bedrock:sa-east-1::foundation-model/amazon.titan-text-express-v1",
+        "Body": {
+          "inputText": "Liste 2 bebidas que acompanhem um jantar romântico.",
+          "textGenerationConfig": {
+            "temperature": 0.7,
+            "topP": 1,
+            "maxTokenCount": 100
+          }
+        },
+        "ContentType": "application/json",
+        "Accept": "*/*"
+      },
+      "ResultPath": "$.Bebidas",
+      "Next": "Pass 2"
+    },
+    "Pass 2": {
+      "Type": "Pass",
+      "Next": "Invoke model with prompt 3"
+    },
+    "Invoke model with prompt 3": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::bedrock:invokeModel",
+      "Parameters": {
+        "ModelId": "arn:aws:bedrock:sa-east-1::foundation-model/amazon.titan-text-express-v1",
+        "Body": {
+          "inputText": "Liste um lugar perfeito para um jantar romântico.",
+          "textGenerationConfig": {
+            "temperature": 0.7,
+            "topP": 1,
+            "maxTokenCount": 100
+          }
+        },
+        "ContentType": "application/json",
+        "Accept": "*/*"
+      },
+      "ResultPath": "$.Local",
+      "Next": "Success"
+    },
+    "Success": {
+      "Type": "Pass",
+      "Parameters": {
+        "Itens.$": "$.Itens.Body.results[0].outputText",
+        "Bebidas.$": "$.Bebidas.Body.results[0].outputText",
+        "Local.$": "$.Local.Body.results[0].outputText"
+      },
+      "End": true
+    }
+  }
+}
